@@ -55,9 +55,10 @@ export async function apiFetch<T = unknown>(
 
   if (!res.ok) {
     if (res.status === 401) authStore.clear();
-    const message =
-      (data && typeof data === "object" && "message" in data && String((data as Record<string, unknown>).message)) ||
-      `Request failed (${res.status})`;
+    let message = `Request failed (${res.status})`;
+    if (data && typeof data === "object" && "message" in data) {
+      message = String((data as Record<string, unknown>).message);
+    }
     throw new ApiError(message, res.status, data);
   }
   return data as T;
